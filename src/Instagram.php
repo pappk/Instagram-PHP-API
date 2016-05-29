@@ -602,7 +602,7 @@ class Instagram {
 		curl_setopt( $ch, CURLOPT_TIMEOUT, 90 );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
-		curl_setopt( $ch, CURLOPT_HEADER, true );
+		curl_setopt( $ch, CURLOPT_HEADER, false );
 
 		// set curl proxy settings
 		if ( ! empty( $this->getProxyHost() ) && ! empty( $this->getProxyPort() ) ) {
@@ -625,17 +625,6 @@ class Instagram {
 		}
 
 		$jsonData = curl_exec( $ch );
-		// split header from JSON data
-		// and assign each to a variable
-		list( $headerContent, $jsonData ) = explode( "\r\n\r\n", $jsonData, 2 );
-
-		// convert header content into an array
-		$headers = $this->processHeaders( $headerContent );
-
-		// get the 'X-Ratelimit-Remaining' header value
-		if ( isset( $headers['X-Ratelimit-Remaining'] ) ) {
-			$this->_xRateLimitRemaining = trim( $headers['X-Ratelimit-Remaining'] );
-		}
 
 		if ( ! $jsonData ) {
 			throw new InstagramException( 'Error: _makeCall() - cURL error: ' . curl_error( $ch ) );
